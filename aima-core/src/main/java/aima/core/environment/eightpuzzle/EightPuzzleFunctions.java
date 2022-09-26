@@ -48,6 +48,19 @@ public class EightPuzzleFunctions {
 		}
 		return result;
 	}
+	
+	public static double getWeightedManhattanDistance(Node<EightPuzzleBoard, Action> node) {
+		EightPuzzleBoard currState = node.getState();
+		int result = 0;
+		for(int val = 1; val <= 8; val++) {
+			XYLocation locCurr = currState.getLocationOf(val);
+			XYLocation locGoal = GOAL_STATE.getLocationOf(val);
+			result += Math.abs(locGoal.getX() - locCurr.getX()) * Math.pow(val, val);
+			result += Math.abs(locGoal.getY() - locCurr.getY()) * Math.pow(val, val);
+		}
+		
+		return result;
+	}
 
 	public static int getNumberOfMisplacedTiles(Node<EightPuzzleBoard, Action> node) {
 		EightPuzzleBoard currState = node.getState();
@@ -57,4 +70,64 @@ public class EightPuzzleFunctions {
 				result++;
 		return result;
 	}
+	
+	public static int getWeightedNumberOfMisplacedTiles(Node<EightPuzzleBoard, Action> node) {
+		EightPuzzleBoard currState = node.getState();
+		int result = 0;
+		for(int val = 1; val <= 8; val++) {
+			if(!(currState.getLocationOf(val).equals(GOAL_STATE.getLocationOf(val)))) {
+				result += Math.pow(val, val);
+			}
+		}
+		
+		return result;
+	}
+	
+	public static double nullHeuristic(Node<EightPuzzleBoard, Action> node) {
+		return 0;
+	}
+	
+	public static int nonWeigthedConsistentHeuristic(Node<EightPuzzleBoard, Action> node) {
+		EightPuzzleBoard currState = node.getState();
+		int result = 0;
+		for(int val = 1; val <=8; val++) {
+			XYLocation locCurr = currState.getLocationOf(val);
+			XYLocation locGoal = GOAL_STATE.getLocationOf(val);
+			int distance = Math.abs(locGoal.getX() - locCurr.getX()) + Math.abs(locGoal.getY() - locCurr.getY());
+			if(distance == 2) result += 1;
+		}
+		
+		return 2 * result;
+	}
+	
+	public static int getWeigthedConsistentHeuristic(Node<EightPuzzleBoard, Action> node) {
+		EightPuzzleBoard currState = node.getState();
+		int result = 0;
+		for(int val = 1; val <=8; val++) {
+			XYLocation locCurr = currState.getLocationOf(val);
+			XYLocation locGoal = GOAL_STATE.getLocationOf(val);
+			int distance = Math.abs(locGoal.getX() - locCurr.getX()) + Math.abs(locGoal.getY() - locCurr.getY());
+			if(distance == 2) result += distance * Math.pow(val, val);
+		}
+		
+		return result;
+	}
+	
+	public static double getEpsilonWeightedManhattanDistance(Node<EightPuzzleBoard, Action> node) {
+		double epsilon = 0.1; // >= 0
+		return getWeightedManhattanDistance(node) * (1 + epsilon);
+	}
+	
+	public static double stepCostFunction(EightPuzzleBoard state, Action action, EightPuzzleBoard sucState) {
+		double val = 0;
+		XYLocation location = state.getLocationOf(0);
+		if(action == EightPuzzleBoard.UP) val = state.getValueAt(new XYLocation(location.getX(), location.getY() - 1));
+		else if(action == EightPuzzleBoard.DOWN) val = state.getValueAt(new XYLocation(location.getX(), location.getY() + 1));
+		else if(action == EightPuzzleBoard.LEFT) val = state.getValueAt(new XYLocation(location.getX() - 1, location.getY()));
+		else if(action == EightPuzzleBoard.RIGHT) val = state.getValueAt(new XYLocation(location.getX() + 1, location.getY()));
+		return Math.pow(val, val);
+	}
+	
+	
+	
 }

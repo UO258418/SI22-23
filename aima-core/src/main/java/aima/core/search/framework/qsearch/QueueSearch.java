@@ -88,6 +88,10 @@ public abstract class QueueSearch<S, A> {
 		metrics.set(METRIC_QUEUE_SIZE, 0);
 		metrics.set(METRIC_MAX_QUEUE_SIZE, 0);
 		metrics.set(METRIC_PATH_COST, 0);
+		
+		metrics.set(METRIC_NODES_EXPANDED_REINSERTED_IN_FRONTIER, 0);
+		metrics.set(METRIC_NODES_DUPLICATED_IN_FRONTIER, 0);
+		metrics.set(TIME_TAKEN, 0);
 	}
 
 	protected void updateMetrics(int queueSize) {

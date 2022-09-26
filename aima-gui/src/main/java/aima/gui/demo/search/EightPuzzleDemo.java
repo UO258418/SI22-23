@@ -29,7 +29,8 @@ public class EightPuzzleDemo {
 			new EightPuzzleBoard(new int[] { 1, 4, 2, 7, 5, 8, 3, 0, 6 });*/
 	
 	private static EightPuzzleBoard random1 =
-			new EightPuzzleBoard(new int[] {4, 8, 2, 6, 3, 5, 1, 0, 7});
+			new EightPuzzleBoard(new int[] {6, 7, 4, 0, 5, 1, 3, 2, 8}
+);
 	
 	// Banco de ejemplos para el 8-puzzle. 
 	// Objetivo {1, 2, 3, 8, 0, 4, 7, 6, 5}
@@ -105,8 +106,8 @@ public class EightPuzzleDemo {
 		//eightPuzzleIDLSDemo();
 		//eightPuzzleGreedyBestFirstDemo();
 		//eightPuzzleGreedyBestFirstManhattanDemo();
-		//eightPuzzleAStarDemo();
-		eightPuzzleAStarManhattanDemo();
+		eightPuzzleAStarDemo();
+		//eightPuzzleAStarManhattanDemo();
 		//eightPuzzleSimulatedAnnealingDemo();
 	}
 
@@ -170,7 +171,7 @@ public class EightPuzzleDemo {
 		try {
 			Problem<EightPuzzleBoard, Action> problem = new BidirectionalEightPuzzleProblem(random1);
 			SearchForActions<EightPuzzleBoard, Action> search = new AStarSearch<>
-					(new GraphSearch<>(), EightPuzzleFunctions::getNumberOfMisplacedTiles);
+					(new GraphSearch<>(), EightPuzzleFunctions::getEpsilonWeightedManhattanDistance);
 			SearchAgent<Object, EightPuzzleBoard, Action> agent = new SearchAgent<>(problem, search);
 			printActions(agent.getActions());
 			printInstrumentation(agent.getInstrumentation());
