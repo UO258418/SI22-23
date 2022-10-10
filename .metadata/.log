@@ -6300,3 +6300,658 @@ java.lang.IllegalArgumentException
 	at org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy.reconcile(JavaCompositeReconcilingStrategy.java:107)
 	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:76)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:207)
+!SESSION 2022-10-10 16:06:34.909 -----------------------------------------------
+eclipse.buildId=4.23.0.I20220308-0310
+java.version=17.0.2
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_ES
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.jface 2 0 2022-10-10 16:08:49.558
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2022-10-10 16:08:49.558
+!MESSAGE A conflict occurred for CTRL+SHIFT+T:
+Binding(CTRL+SHIFT+T,
+	ParameterizedCommand(Command(org.eclipse.jdt.ui.navigate.open.type,Open Type,
+		Open a type in a Java editor,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@2bd7f686,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+Binding(CTRL+SHIFT+T,
+	ParameterizedCommand(Command(org.eclipse.lsp4e.symbolinworkspace,Go to Symbol in Workspace,
+		,
+		Category(org.eclipse.lsp4e.category,Language Servers,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@3601549f,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2022-10-10 16:08:49.558
+!MESSAGE A conflict occurred for ALT+SHIFT+R:
+Binding(ALT+SHIFT+R,
+	ParameterizedCommand(Command(org.eclipse.jdt.ui.edit.text.java.rename.element,Rename - Refactoring ,
+		Rename the selected element,
+		Category(org.eclipse.jdt.ui.category.refactoring,Refactor - Java,Java Refactoring Actions,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@5b2c7186,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+Binding(ALT+SHIFT+R,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.rename,Rename,
+		Rename the selected item,
+		Category(org.eclipse.ui.category.file,File,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1b9c716f,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+
+!ENTRY org.eclipse.egit.ui 2 0 2022-10-10 16:08:53.880
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\UO258418'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.jdt.core 4 4 2022-10-10 16:26:32.065
+!MESSAGE Exception occurred during compilation unit conversion:
+----------------------------------- SOURCE BEGIN -------------------------------------
+package aima.gui.demo.search;
+
+import aima.core.environment.nqueens.NQueensBoard;
+import aima.core.environment.nqueens.NQueensBoard.Config;
+import aima.core.environment.nqueens.NQueensFunctions;
+import aima.core.environment.nqueens.NQueensGenAlgoUtil;
+import aima.core.environment.nqueens.QueenAction;
+import aima.core.search.framework.SearchForActions;
+import aima.core.search.framework.problem.Problem;
+import aima.core.search.framework.qsearch.GraphSearch;
+import aima.core.search.framework.qsearch.GraphSearch4e;
+import aima.core.search.framework.qsearch.TreeSearch;
+import aima.core.search.informed.AStarSearch;
+import aima.core.search.local.*;
+import aima.core.search.uninformed.BreadthFirstSearch;
+import aima.core.search.uninformed.DepthFirstSearch;
+import aima.core.search.uninformed.DepthLimitedSearch;
+import aima.core.search.uninformed.IterativeDeepeningSearch;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Predicate;
+
+/**
+ * Demonsrates how different search algorithms perform on the NQueens problem.
+ * @author Ruediger Lunde
+ * @author Ravi Mohan
+ */
+
+public class NQueensDemo {
+
+	private static final int boardSize = ;
+
+	public static void main(String[] args) {
+		startNQueensDemo();
+	}
+
+	private static void startNQueensDemo() {
+		/*solveNQueensWithDepthFirstSearch();
+		solveNQueensWithBreadthFirstSearch();
+		solveNQueensWithAStarSearch();
+		solveNQueensWithAStarSearch4e();
+		solveNQueensWithRecursiveDLS();
+		solveNQueensWithIterativeDeepeningSearch();
+		solveNQueensWithSimulatedAnnealingSearch();
+		solveNQueensWithHillClimbingSearch();*/
+		solveNQueensWithGeneticAlgorithmSearch();
+		//solveNQueensWithRandomWalk();
+	}
+
+	private static void solveNQueensWithDepthFirstSearch() {
+		System.out.println("\n--- NQueensDemo DFS ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createIncrementalFormulationProblem(boardSize);
+		SearchForActions<NQueensBoard, QueenAction> search = new DepthFirstSearch<>(new TreeSearch<>());
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithBreadthFirstSearch() {
+		System.out.println("\n--- NQueensDemo BFS ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createIncrementalFormulationProblem(boardSize);
+		SearchForActions<NQueensBoard, QueenAction> search = new BreadthFirstSearch<>(new GraphSearch<>());
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithAStarSearch() {
+		System.out.println("\n--- NQueensDemo A* (complete state formulation, graph search 3e) ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createCompleteStateFormulationProblem
+				(boardSize, Config.QUEENS_IN_FIRST_ROW);
+		SearchForActions<NQueensBoard, QueenAction> search = new AStarSearch<>
+				(new GraphSearch<>(), NQueensFunctions::getNumberOfAttackingPairs);
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithAStarSearch4e() {
+		System.out.println("\n--- NQueensDemo A* (complete state formulation, graph search 4e) ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createCompleteStateFormulationProblem
+				(boardSize, Config.QUEENS_IN_FIRST_ROW);
+		SearchForActions<NQueensBoard, QueenAction> search = new AStarSearch<>
+				(new GraphSearch4e<>(), NQueensFunctions::getNumberOfAttackingPairs);
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithRecursiveDLS() {
+		System.out.println("\n--- NQueensDemo recursive DLS ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createIncrementalFormulationProblem(boardSize);
+		SearchForActions<NQueensBoard, QueenAction> search = new DepthLimitedSearch<>(boardSize);
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithIterativeDeepeningSearch() {
+		System.out.println("\n--- NQueensDemo Iterative DS ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createIncrementalFormulationProblem(boardSize);
+		SearchForActions<NQueensBoard, QueenAction> search = new IterativeDeepeningSearch<>();
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithSimulatedAnnealingSearch() {
+		System.out.println("\n--- NQueensDemo Simulated Annealing ---");
+
+		Problem<NQueensBoard, QueenAction> problem =
+				NQueensFunctions.createCompleteStateFormulationProblem(boardSize, Config.QUEENS_IN_FIRST_ROW);
+		SimulatedAnnealingSearch<NQueensBoard, QueenAction> search =
+				new SimulatedAnnealingSearch<>(NQueensFunctions::getNumberOfAttackingPairs,
+						new Scheduler(20, 0.045, 100));
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+		System.out.println("Final State:\n" + search.getLastState());
+	}
+
+	private static void solveNQueensWithHillClimbingSearch() {
+		System.out.println("\n--- NQueensDemo HillClimbing ---");
+
+		Problem<NQueensBoard, QueenAction> problem =
+				NQueensFunctions.createCompleteStateFormulationProblem(boardSize, Config.QUEENS_IN_FIRST_ROW);
+		HillClimbingSearch<NQueensBoard, QueenAction> search = new HillClimbingSearch<>
+				(n -> -NQueensFunctions.getNumberOfAttackingPairs(n));
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+		System.out.println("Final State:\n" + search.getLastState());
+	}
+
+	private static void solveNQueensWithGeneticAlgorithmSearch() {
+		System.out.println("\n--- NQueensDemo GeneticAlgorithm ---");
+		
+		final int popSize = 50;
+		final double mutationProbability = 0.15;
+		final int numberOfGenerations = 100;
+
+		FitnessFunction<Integer> fitnessFunction = NQueensGenAlgoUtil.getFitnessFunction();
+		Predicate<Individual<Integer>> goalTest = NQueensGenAlgoUtil.getGoalTest();
+		// Generate an initial population
+		Set<Individual<Integer>> population = new HashSet<>();
+		for (int i = 0; i < popSize; i++)
+			population.add(NQueensGenAlgoUtil.generateRandomIndividual(boardSize));
+
+		GeneticAlgorithm<Integer> ga = new GeneticAlgorithm<>(boardSize,
+				NQueensGenAlgoUtil.getFiniteAlphabetForBoardOfSize(boardSize), mutationProbability);
+
+		// Run for a set amount of time
+		//Individual<Integer> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, 1000L);
+		Individual<Integer> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, numberOfGenerations);
+		System.out.println("Max time 1 second, Best Individual:\n"
+				+ NQueensGenAlgoUtil.getBoardForIndividual(bestIndividual));
+		System.out.println("Board Size      = " + boardSize);
+		System.out.println("# Board Layouts = " + (new BigDecimal(boardSize)).pow(boardSize));
+		System.out.println("Fitness         = " + fitnessFunction.apply(bestIndividual));
+		System.out.println("Is Goal         = " + goalTest.test(bestIndividual));
+		System.out.println("Population Size = " + ga.getPopulationSize());
+		System.out.println("Iterations      = " + ga.getIterations());
+		System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");
+
+		/*// Run till goal is achieved
+		bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, 0L);
+		System.out.println("");
+		System.out.println("Max time unlimited, Best Individual:\n" +
+				NQueensGenAlgoUtil.getBoardForIndividual(bestIndividual));
+		System.out.println("Board Size      = " + boardSize);
+		System.out.println("# Board Layouts = " + (new BigDecimal(boardSize)).pow(boardSize));
+		System.out.println("Fitness         = " + fitnessFunction.apply(bestIndividual));
+		System.out.println("Is Goal         = " + goalTest.test(bestIndividual));
+		System.out.println("Population Size = " + ga.getPopulationSize());
+		System.out.println("Itertions       = " + ga.getIterations());
+		System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");*/
+	}
+
+	// Here, this trivial algorithm outperforms the genetic search approach as described in the textbook!
+	private static void solveNQueensWithRandomWalk() {
+		System.out.println("\n--- NQueensDemo RandomWalk ---");
+		NQueensBoard board;
+		int i = 0;
+		long startTime = System.currentTimeMillis();
+		do {
+			i++;
+			board = new NQueensBoard(boardSize, Config.QUEEN_IN_EVERY_COL);
+		} while (board.getNumberOfAttackingPairs() > 0);
+		long stopTime = System.currentTimeMillis();
+		System.out.println("Solution found after generating " + i + " random configurations ("
+				+ (stopTime - startTime) + " ms).");
+	}
+}
+
+----------------------------------- SOURCE END -------------------------------------
+!STACK 0
+java.lang.IllegalArgumentException
+	at org.eclipse.jdt.core.dom.ASTNode.setSourceRange(ASTNode.java:3263)
+	at org.eclipse.jdt.core.dom.ASTConverter.convertToFieldDeclaration(ASTConverter.java:3719)
+	at org.eclipse.jdt.core.dom.ASTConverter.checkAndAddMultipleFieldDeclaration(ASTConverter.java:541)
+	at org.eclipse.jdt.core.dom.ASTConverter.buildBodyDeclarations(ASTConverter.java:201)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:3390)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:1534)
+	at org.eclipse.jdt.core.dom.AST.convertCompilationUnit(AST.java:521)
+	at org.eclipse.jdt.internal.core.CompilationUnit.buildStructure(CompilationUnit.java:201)
+	at org.eclipse.jdt.internal.core.Openable.generateInfos(Openable.java:266)
+	at org.eclipse.jdt.internal.core.JavaElement.openWhenClosed(JavaElement.java:597)
+	at org.eclipse.jdt.internal.core.CompilationUnit.makeConsistent(CompilationUnit.java:1142)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.makeConsistent(ReconcileWorkingCopyOperation.java:173)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.executeOperation(ReconcileWorkingCopyOperation.java:94)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.run(JavaModelOperation.java:740)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.runOperation(JavaModelOperation.java:806)
+	at org.eclipse.jdt.internal.core.CompilationUnit.reconcile(CompilationUnit.java:1319)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:132)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy$1.run(JavaReconcilingStrategy.java:94)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:91)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:158)
+	at org.eclipse.jdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:94)
+	at org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy.reconcile(JavaCompositeReconcilingStrategy.java:107)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:76)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:207)
+
+!ENTRY org.eclipse.jdt.ui 4 2 2022-10-10 16:26:32.067
+!MESSAGE Problems occurred when invoking code from plug-in: "org.eclipse.jdt.ui".
+!STACK 0
+java.lang.IllegalArgumentException
+	at org.eclipse.jdt.core.dom.ASTNode.setSourceRange(ASTNode.java:3263)
+	at org.eclipse.jdt.core.dom.ASTConverter.convertToFieldDeclaration(ASTConverter.java:3719)
+	at org.eclipse.jdt.core.dom.ASTConverter.checkAndAddMultipleFieldDeclaration(ASTConverter.java:541)
+	at org.eclipse.jdt.core.dom.ASTConverter.buildBodyDeclarations(ASTConverter.java:201)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:3390)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:1534)
+	at org.eclipse.jdt.core.dom.AST.convertCompilationUnit(AST.java:521)
+	at org.eclipse.jdt.internal.core.CompilationUnit.buildStructure(CompilationUnit.java:201)
+	at org.eclipse.jdt.internal.core.Openable.generateInfos(Openable.java:266)
+	at org.eclipse.jdt.internal.core.JavaElement.openWhenClosed(JavaElement.java:597)
+	at org.eclipse.jdt.internal.core.CompilationUnit.makeConsistent(CompilationUnit.java:1142)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.makeConsistent(ReconcileWorkingCopyOperation.java:173)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.executeOperation(ReconcileWorkingCopyOperation.java:94)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.run(JavaModelOperation.java:740)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.runOperation(JavaModelOperation.java:806)
+	at org.eclipse.jdt.internal.core.CompilationUnit.reconcile(CompilationUnit.java:1319)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:132)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy$1.run(JavaReconcilingStrategy.java:94)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:91)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:158)
+	at org.eclipse.jdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:94)
+	at org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy.reconcile(JavaCompositeReconcilingStrategy.java:107)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:76)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:207)
+
+!ENTRY org.eclipse.jdt.ui 4 0 2022-10-10 16:26:32.068
+!MESSAGE Error in JDT Core during reconcile
+!STACK 0
+java.lang.IllegalArgumentException
+	at org.eclipse.jdt.core.dom.ASTNode.setSourceRange(ASTNode.java:3263)
+	at org.eclipse.jdt.core.dom.ASTConverter.convertToFieldDeclaration(ASTConverter.java:3719)
+	at org.eclipse.jdt.core.dom.ASTConverter.checkAndAddMultipleFieldDeclaration(ASTConverter.java:541)
+	at org.eclipse.jdt.core.dom.ASTConverter.buildBodyDeclarations(ASTConverter.java:201)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:3390)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:1534)
+	at org.eclipse.jdt.core.dom.AST.convertCompilationUnit(AST.java:521)
+	at org.eclipse.jdt.internal.core.CompilationUnit.buildStructure(CompilationUnit.java:201)
+	at org.eclipse.jdt.internal.core.Openable.generateInfos(Openable.java:266)
+	at org.eclipse.jdt.internal.core.JavaElement.openWhenClosed(JavaElement.java:597)
+	at org.eclipse.jdt.internal.core.CompilationUnit.makeConsistent(CompilationUnit.java:1142)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.makeConsistent(ReconcileWorkingCopyOperation.java:173)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.executeOperation(ReconcileWorkingCopyOperation.java:94)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.run(JavaModelOperation.java:740)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.runOperation(JavaModelOperation.java:806)
+	at org.eclipse.jdt.internal.core.CompilationUnit.reconcile(CompilationUnit.java:1319)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:132)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy$1.run(JavaReconcilingStrategy.java:94)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:91)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:158)
+	at org.eclipse.jdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:94)
+	at org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy.reconcile(JavaCompositeReconcilingStrategy.java:107)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:76)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:207)
+
+!ENTRY org.eclipse.jdt.core 4 4 2022-10-10 16:33:54.815
+!MESSAGE Exception occurred during compilation unit conversion:
+----------------------------------- SOURCE BEGIN -------------------------------------
+package aima.gui.demo.search;
+
+import aima.core.environment.nqueens.NQueensBoard;
+import aima.core.environment.nqueens.NQueensBoard.Config;
+import aima.core.environment.nqueens.NQueensFunctions;
+import aima.core.environment.nqueens.NQueensGenAlgoUtil;
+import aima.core.environment.nqueens.QueenAction;
+import aima.core.search.framework.SearchForActions;
+import aima.core.search.framework.problem.Problem;
+import aima.core.search.framework.qsearch.GraphSearch;
+import aima.core.search.framework.qsearch.GraphSearch4e;
+import aima.core.search.framework.qsearch.TreeSearch;
+import aima.core.search.informed.AStarSearch;
+import aima.core.search.local.*;
+import aima.core.search.uninformed.BreadthFirstSearch;
+import aima.core.search.uninformed.DepthFirstSearch;
+import aima.core.search.uninformed.DepthLimitedSearch;
+import aima.core.search.uninformed.IterativeDeepeningSearch;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Predicate;
+
+/**
+ * Demonsrates how different search algorithms perform on the NQueens problem.
+ * @author Ruediger Lunde
+ * @author Ravi Mohan
+ */
+
+public class NQueensDemo {
+
+	private static final int boardSize = ;
+
+	public static void main(String[] args) {
+		startNQueensDemo();
+	}
+
+	private static void startNQueensDemo() {
+		/*solveNQueensWithDepthFirstSearch();
+		solveNQueensWithBreadthFirstSearch();
+		solveNQueensWithAStarSearch();
+		solveNQueensWithAStarSearch4e();
+		solveNQueensWithRecursiveDLS();
+		solveNQueensWithIterativeDeepeningSearch();
+		solveNQueensWithSimulatedAnnealingSearch();
+		solveNQueensWithHillClimbingSearch();*/
+		solveNQueensWithGeneticAlgorithmSearch();
+		//solveNQueensWithRandomWalk();
+	}
+
+	private static void solveNQueensWithDepthFirstSearch() {
+		System.out.println("\n--- NQueensDemo DFS ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createIncrementalFormulationProblem(boardSize);
+		SearchForActions<NQueensBoard, QueenAction> search = new DepthFirstSearch<>(new TreeSearch<>());
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithBreadthFirstSearch() {
+		System.out.println("\n--- NQueensDemo BFS ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createIncrementalFormulationProblem(boardSize);
+		SearchForActions<NQueensBoard, QueenAction> search = new BreadthFirstSearch<>(new GraphSearch<>());
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithAStarSearch() {
+		System.out.println("\n--- NQueensDemo A* (complete state formulation, graph search 3e) ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createCompleteStateFormulationProblem
+				(boardSize, Config.QUEENS_IN_FIRST_ROW);
+		SearchForActions<NQueensBoard, QueenAction> search = new AStarSearch<>
+				(new GraphSearch<>(), NQueensFunctions::getNumberOfAttackingPairs);
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithAStarSearch4e() {
+		System.out.println("\n--- NQueensDemo A* (complete state formulation, graph search 4e) ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createCompleteStateFormulationProblem
+				(boardSize, Config.QUEENS_IN_FIRST_ROW);
+		SearchForActions<NQueensBoard, QueenAction> search = new AStarSearch<>
+				(new GraphSearch4e<>(), NQueensFunctions::getNumberOfAttackingPairs);
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithRecursiveDLS() {
+		System.out.println("\n--- NQueensDemo recursive DLS ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createIncrementalFormulationProblem(boardSize);
+		SearchForActions<NQueensBoard, QueenAction> search = new DepthLimitedSearch<>(boardSize);
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithIterativeDeepeningSearch() {
+		System.out.println("\n--- NQueensDemo Iterative DS ---");
+
+		Problem<NQueensBoard, QueenAction> problem = NQueensFunctions.createIncrementalFormulationProblem(boardSize);
+		SearchForActions<NQueensBoard, QueenAction> search = new IterativeDeepeningSearch<>();
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+	}
+
+	private static void solveNQueensWithSimulatedAnnealingSearch() {
+		System.out.println("\n--- NQueensDemo Simulated Annealing ---");
+
+		Problem<NQueensBoard, QueenAction> problem =
+				NQueensFunctions.createCompleteStateFormulationProblem(boardSize, Config.QUEENS_IN_FIRST_ROW);
+		SimulatedAnnealingSearch<NQueensBoard, QueenAction> search =
+				new SimulatedAnnealingSearch<>(NQueensFunctions::getNumberOfAttackingPairs,
+						new Scheduler(20, 0.045, 100));
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+		System.out.println("Final State:\n" + search.getLastState());
+	}
+
+	private static void solveNQueensWithHillClimbingSearch() {
+		System.out.println("\n--- NQueensDemo HillClimbing ---");
+
+		Problem<NQueensBoard, QueenAction> problem =
+				NQueensFunctions.createCompleteStateFormulationProblem(boardSize, Config.QUEENS_IN_FIRST_ROW);
+		HillClimbingSearch<NQueensBoard, QueenAction> search = new HillClimbingSearch<>
+				(n -> -NQueensFunctions.getNumberOfAttackingPairs(n));
+		Optional<List<QueenAction>> actions = search.findActions(problem);
+
+		actions.ifPresent(qActions -> qActions.forEach(System.out::println));
+		System.out.println(search.getMetrics());
+		System.out.println("Final State:\n" + search.getLastState());
+	}
+
+	private static void solveNQueensWithGeneticAlgorithmSearch() {
+		System.out.println("\n--- NQueensDemo GeneticAlgorithm ---");
+		
+		final int popSize = 50;
+		final double mutationProbability = 0.15;
+		final int numberOfGenerations = 1000;
+
+		FitnessFunction<Integer> fitnessFunction = NQueensGenAlgoUtil.getFitnessFunction();
+		Predicate<Individual<Integer>> goalTest = NQueensGenAlgoUtil.getGoalTest();
+		// Generate an initial population
+		Set<Individual<Integer>> population = new HashSet<>();
+		for (int i = 0; i < popSize; i++)
+			population.add(NQueensGenAlgoUtil.generateRandomIndividual(boardSize));
+
+		GeneticAlgorithm<Integer> ga = new GeneticAlgorithm<>(boardSize,
+				NQueensGenAlgoUtil.getFiniteAlphabetForBoardOfSize(boardSize), mutationProbability);
+
+		// Run for a set amount of time
+		//Individual<Integer> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, 1000L);
+		Individual<Integer> bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, numberOfGenerations);
+		System.out.println("Max time 1 second, Best Individual:\n"
+				+ NQueensGenAlgoUtil.getBoardForIndividual(bestIndividual));
+		System.out.println("Board Size      = " + boardSize);
+		System.out.println("# Board Layouts = " + (new BigDecimal(boardSize)).pow(boardSize));
+		System.out.println("Fitness         = " + fitnessFunction.apply(bestIndividual));
+		System.out.println("Is Goal         = " + goalTest.test(bestIndividual));
+		System.out.println("Population Size = " + ga.getPopulationSize());
+		System.out.println("Iterations      = " + ga.getIterations());
+		System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");
+
+		/*// Run till goal is achieved
+		bestIndividual = ga.geneticAlgorithm(population, fitnessFunction, goalTest, 0L);
+		System.out.println("");
+		System.out.println("Max time unlimited, Best Individual:\n" +
+				NQueensGenAlgoUtil.getBoardForIndividual(bestIndividual));
+		System.out.println("Board Size      = " + boardSize);
+		System.out.println("# Board Layouts = " + (new BigDecimal(boardSize)).pow(boardSize));
+		System.out.println("Fitness         = " + fitnessFunction.apply(bestIndividual));
+		System.out.println("Is Goal         = " + goalTest.test(bestIndividual));
+		System.out.println("Population Size = " + ga.getPopulationSize());
+		System.out.println("Itertions       = " + ga.getIterations());
+		System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");*/
+	}
+
+	// Here, this trivial algorithm outperforms the genetic search approach as described in the textbook!
+	private static void solveNQueensWithRandomWalk() {
+		System.out.println("\n--- NQueensDemo RandomWalk ---");
+		NQueensBoard board;
+		int i = 0;
+		long startTime = System.currentTimeMillis();
+		do {
+			i++;
+			board = new NQueensBoard(boardSize, Config.QUEEN_IN_EVERY_COL);
+		} while (board.getNumberOfAttackingPairs() > 0);
+		long stopTime = System.currentTimeMillis();
+		System.out.println("Solution found after generating " + i + " random configurations ("
+				+ (stopTime - startTime) + " ms).");
+	}
+}
+
+----------------------------------- SOURCE END -------------------------------------
+!STACK 0
+java.lang.IllegalArgumentException
+	at org.eclipse.jdt.core.dom.ASTNode.setSourceRange(ASTNode.java:3263)
+	at org.eclipse.jdt.core.dom.ASTConverter.convertToFieldDeclaration(ASTConverter.java:3719)
+	at org.eclipse.jdt.core.dom.ASTConverter.checkAndAddMultipleFieldDeclaration(ASTConverter.java:541)
+	at org.eclipse.jdt.core.dom.ASTConverter.buildBodyDeclarations(ASTConverter.java:201)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:3390)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:1534)
+	at org.eclipse.jdt.core.dom.AST.convertCompilationUnit(AST.java:521)
+	at org.eclipse.jdt.internal.core.CompilationUnit.buildStructure(CompilationUnit.java:201)
+	at org.eclipse.jdt.internal.core.Openable.generateInfos(Openable.java:266)
+	at org.eclipse.jdt.internal.core.JavaElement.openWhenClosed(JavaElement.java:597)
+	at org.eclipse.jdt.internal.core.CompilationUnit.makeConsistent(CompilationUnit.java:1142)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.makeConsistent(ReconcileWorkingCopyOperation.java:173)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.executeOperation(ReconcileWorkingCopyOperation.java:94)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.run(JavaModelOperation.java:740)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.runOperation(JavaModelOperation.java:806)
+	at org.eclipse.jdt.internal.core.CompilationUnit.reconcile(CompilationUnit.java:1319)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:132)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy$1.run(JavaReconcilingStrategy.java:94)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:91)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:158)
+	at org.eclipse.jdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:94)
+	at org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy.reconcile(JavaCompositeReconcilingStrategy.java:107)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:76)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:207)
+
+!ENTRY org.eclipse.jdt.ui 4 2 2022-10-10 16:33:54.816
+!MESSAGE Problems occurred when invoking code from plug-in: "org.eclipse.jdt.ui".
+!STACK 0
+java.lang.IllegalArgumentException
+	at org.eclipse.jdt.core.dom.ASTNode.setSourceRange(ASTNode.java:3263)
+	at org.eclipse.jdt.core.dom.ASTConverter.convertToFieldDeclaration(ASTConverter.java:3719)
+	at org.eclipse.jdt.core.dom.ASTConverter.checkAndAddMultipleFieldDeclaration(ASTConverter.java:541)
+	at org.eclipse.jdt.core.dom.ASTConverter.buildBodyDeclarations(ASTConverter.java:201)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:3390)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:1534)
+	at org.eclipse.jdt.core.dom.AST.convertCompilationUnit(AST.java:521)
+	at org.eclipse.jdt.internal.core.CompilationUnit.buildStructure(CompilationUnit.java:201)
+	at org.eclipse.jdt.internal.core.Openable.generateInfos(Openable.java:266)
+	at org.eclipse.jdt.internal.core.JavaElement.openWhenClosed(JavaElement.java:597)
+	at org.eclipse.jdt.internal.core.CompilationUnit.makeConsistent(CompilationUnit.java:1142)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.makeConsistent(ReconcileWorkingCopyOperation.java:173)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.executeOperation(ReconcileWorkingCopyOperation.java:94)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.run(JavaModelOperation.java:740)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.runOperation(JavaModelOperation.java:806)
+	at org.eclipse.jdt.internal.core.CompilationUnit.reconcile(CompilationUnit.java:1319)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:132)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy$1.run(JavaReconcilingStrategy.java:94)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:91)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:158)
+	at org.eclipse.jdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:94)
+	at org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy.reconcile(JavaCompositeReconcilingStrategy.java:107)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:76)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:207)
+
+!ENTRY org.eclipse.jdt.ui 4 0 2022-10-10 16:33:54.817
+!MESSAGE Error in JDT Core during reconcile
+!STACK 0
+java.lang.IllegalArgumentException
+	at org.eclipse.jdt.core.dom.ASTNode.setSourceRange(ASTNode.java:3263)
+	at org.eclipse.jdt.core.dom.ASTConverter.convertToFieldDeclaration(ASTConverter.java:3719)
+	at org.eclipse.jdt.core.dom.ASTConverter.checkAndAddMultipleFieldDeclaration(ASTConverter.java:541)
+	at org.eclipse.jdt.core.dom.ASTConverter.buildBodyDeclarations(ASTConverter.java:201)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:3390)
+	at org.eclipse.jdt.core.dom.ASTConverter.convert(ASTConverter.java:1534)
+	at org.eclipse.jdt.core.dom.AST.convertCompilationUnit(AST.java:521)
+	at org.eclipse.jdt.internal.core.CompilationUnit.buildStructure(CompilationUnit.java:201)
+	at org.eclipse.jdt.internal.core.Openable.generateInfos(Openable.java:266)
+	at org.eclipse.jdt.internal.core.JavaElement.openWhenClosed(JavaElement.java:597)
+	at org.eclipse.jdt.internal.core.CompilationUnit.makeConsistent(CompilationUnit.java:1142)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.makeConsistent(ReconcileWorkingCopyOperation.java:173)
+	at org.eclipse.jdt.internal.core.ReconcileWorkingCopyOperation.executeOperation(ReconcileWorkingCopyOperation.java:94)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.run(JavaModelOperation.java:740)
+	at org.eclipse.jdt.internal.core.JavaModelOperation.runOperation(JavaModelOperation.java:806)
+	at org.eclipse.jdt.internal.core.CompilationUnit.reconcile(CompilationUnit.java:1319)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:132)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy$1.run(JavaReconcilingStrategy.java:94)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:91)
+	at org.eclipse.jdt.internal.ui.text.java.JavaReconcilingStrategy.reconcile(JavaReconcilingStrategy.java:158)
+	at org.eclipse.jdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:94)
+	at org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy.reconcile(JavaCompositeReconcilingStrategy.java:107)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:76)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:207)

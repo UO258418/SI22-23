@@ -2,4 +2,7 @@
 <qualifiedTypeNameHistroy>
     <fullyQualifiedTypeName name="java.util.Map"/>
     <fullyQualifiedTypeName name="aima.core.search.informed.EvaluationFunction"/>
+    <fullyQualifiedTypeName name="aima.core.environment.eightpuzzle.EightPuzzleFunctions"/>
+    <fullyQualifiedTypeName name="aima.core.util.datastructure.XYLocation"/>
+    <fullyQualifiedTypeName name="aima.core.environment.eightpuzzle.EightPuzzleBoard"/>
 </qualifiedTypeNameHistroy>

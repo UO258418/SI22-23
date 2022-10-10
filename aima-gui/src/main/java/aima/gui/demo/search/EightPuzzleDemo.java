@@ -171,7 +171,8 @@ public class EightPuzzleDemo {
 		try {
 			Problem<EightPuzzleBoard, Action> problem = new BidirectionalEightPuzzleProblem(random1);
 			SearchForActions<EightPuzzleBoard, Action> search = new AStarSearch<>
-					(new GraphSearch<>(), EightPuzzleFunctions::getEpsilonWeightedManhattanDistance);
+					(new GraphSearch<>(), EightPuzzleFunctions::getEpsilonWeightedManhattanDistance
+							);
 			SearchAgent<Object, EightPuzzleBoard, Action> agent = new SearchAgent<>(problem, search);
 			printActions(agent.getActions());
 			printInstrumentation(agent.getInstrumentation());

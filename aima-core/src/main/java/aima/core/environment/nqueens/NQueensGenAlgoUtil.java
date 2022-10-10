@@ -27,17 +27,40 @@ public class NQueensGenAlgoUtil {
 		return new NQueensFitnessFunction();
 	}
 	
+	public static FitnessFunction<Integer> getFitnessFunction2() {
+		return new NQueensFitnessFunction();
+	}
+	
 	public static Predicate<Individual<Integer>> getGoalTest() {
 		return new NQueensGenAlgoGoalTest();
 	}
 	
 
-	public static Individual<Integer> generateRandomIndividual(int boardSize) {
+	/*public static Individual<Integer> generateRandomIndividual(int boardSize) {
 		List<Integer> individualRepresentation = new ArrayList<>();
 		for (int i = 0; i < boardSize; i++) {
 			individualRepresentation.add(new Random().nextInt(boardSize));
 		}
 		return new Individual<>(individualRepresentation);
+	}*/
+	
+	public static Individual<Integer> generateRandomIndividual(int boardSize) {
+		List<Integer> individualRepresentation = new ArrayList<>();
+		for(int i = 0; i < boardSize; i++)
+			individualRepresentation.add(i);
+		
+		return new Individual<>((List<Integer>)(shuffle((ArrayList<Integer>)individualRepresentation)));
+	}
+	
+	private static ArrayList<Integer> shuffle(ArrayList<Integer> indRep) {
+		Random rnd = new Random();
+		for(int i = 0; i < indRep.size(); i++) {
+			int j = rnd.nextInt(indRep.size());
+			Integer tmp = indRep.get(i);
+			indRep.set(i,  indRep.get(i));
+			indRep.set(j, tmp);
+		}
+		return indRep;
 	}
 
 	public static Collection<Integer> getFiniteAlphabetForBoardOfSize(int size) {
@@ -95,6 +118,53 @@ public class NQueensGenAlgoUtil {
 			return fitness;
 		}
 	}
+	
+	public static class NQueensFitnessFunction2 implements FitnessFunction<Integer> {
+
+		public double apply(Individual<Integer> individual) {
+			double fitness = 0;
+
+			NQueensBoard board = getBoardForIndividual(individual);
+			int boardSize = board.getSize();
+
+			// Calculate the number of non-attacking pairs of queens (refer to
+			// AIMA
+			// page 117).
+			List<XYLocation> qPositions = board.getQueenPositions();
+			for (int fromX = 0; fromX < (boardSize - 1); fromX++) {
+				for (int toX = fromX + 1; toX < boardSize; toX++) {
+					int fromY = qPositions.get(fromX).getY();
+					boolean nonAttackingPair = true;
+					// Check right beside
+					int toY = fromY;
+					if (board.queenExistsAt(new XYLocation(toX, toY))) {
+						nonAttackingPair = false;
+					}
+					// Check right and above
+					toY = fromY - (toX - fromX);
+					if (toY >= 0) {
+						if (board.queenExistsAt(new XYLocation(toX, toY))) {
+							nonAttackingPair = false;
+						}
+					}
+					// Check right and below
+					toY = fromY + (toX - fromX);
+					if (toY < boardSize) {
+						if (board.queenExistsAt(new XYLocation(toX, toY))) {
+							nonAttackingPair = false;
+						}
+					}
+
+					if (nonAttackingPair) {
+						fitness += 1.0;
+					}
+				}
+			}
+
+			return fitness;
+		}
+	}
+
 
 	public static class NQueensGenAlgoGoalTest implements Predicate<Individual<Integer>> {
 		private final Predicate<NQueensBoard> goalTest = NQueensFunctions::testGoal;
